@@ -3,10 +3,12 @@ import { DailyFormType, MealType } from "../../@types/enums";
 import { IDailyTrackInfo } from "../../@types/IDailyTrackingInfo";
 import DailyBox from "./DailyBox";
 import DailyForm from "./DailyForm";
+import DailyTable from "./DailyTable";
 import { Button, Container, Flex, Title, CloseButton } from "@mantine/core";
 
 const DailyContainer: FC = () => {
   const [showForm, setShowForm] = useState<boolean>(false);
+  const [displayTable, setDisplayTable] = useState<boolean>(false);
   const [formType, setFormType] = useState<DailyFormType>(
     DailyFormType.BloodSugar
   );
@@ -17,7 +19,7 @@ const DailyContainer: FC = () => {
       trackingInfo: [
         {
           type: MealType.Fasting,
-          bloodSugar: 93,
+          bloodSugar: 87,
           time: 0,
         },
         {
@@ -27,7 +29,7 @@ const DailyContainer: FC = () => {
         },
         {
           type: MealType.Breakfast,
-          bloodSugar: 106,
+          bloodSugar: 103,
           time: 0,
         },
         {
@@ -37,7 +39,7 @@ const DailyContainer: FC = () => {
         },
         {
           type: MealType.Lunch,
-          bloodSugar: 117,
+          bloodSugar: 113,
           time: 0,
         },
         {
@@ -47,7 +49,7 @@ const DailyContainer: FC = () => {
         },
         {
           type: MealType.Dinner,
-          bloodSugar: 131,
+          bloodSugar: 121,
           time: 0,
         },
       ],
@@ -129,14 +131,23 @@ const DailyContainer: FC = () => {
           </>
         )}
       </Flex>
-      {data.map(({ date, trackingInfo }) => (
-        <DailyBox
-          key={date}
-          date={date}
-          trackingInfo={trackingInfo}
-          formType={formType}
-        ></DailyBox>
-      ))}
+      <Button m={16} onClick={() => setDisplayTable(!displayTable)}>
+        {displayTable ? "With images" : "Only numbers"}
+      </Button>
+      {displayTable ? (
+        <DailyTable data={data} />
+      ) : (
+        <>
+          {data.map(({ date, trackingInfo }) => (
+            <DailyBox
+              key={date}
+              date={date}
+              trackingInfo={trackingInfo}
+              formType={formType}
+            ></DailyBox>
+          ))}
+        </>
+      )}
     </Container>
   );
 };
