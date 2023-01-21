@@ -1,12 +1,13 @@
 import React, { FC } from "react";
 import "./App.css";
 import Main from "./Pages/Main";
+import { Container } from "@mantine/core";
 
 const App: FC = () => {
   return (
-    <div>
+    <Container size={400}>
       <Main />
-    </div>
+    </Container>
   );
 };
 
