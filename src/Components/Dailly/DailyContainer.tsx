@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { MealType } from "../../@types/enums";
 import { IDailyTrackInfo } from "../../@types/IDailyTrackingInfo";
 import DailyBox from "./DailyBox";
+import DailyForm from "./DailyForm";
 
 const DailyContainer: FC = () => {
   const data: IDailyTrackInfo[] = [
@@ -49,6 +50,7 @@ const DailyContainer: FC = () => {
 
   return (
     <div>
+      <DailyForm />
       {data.map(({ date, trackingInfo }) => (
         <DailyBox key={date} trackingInfo={trackingInfo}></DailyBox>
       ))}
