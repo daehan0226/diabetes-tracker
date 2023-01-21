@@ -5,3 +5,8 @@ export enum MealType {
   Dinner = "Dinner",
   Snack = "Snack",
 }
+
+export enum DailyFormType {
+  Image = "Image",
+  BloodSugar = "BloodSugar",
+}
