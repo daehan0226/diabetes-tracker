@@ -5,7 +5,7 @@ import { Container } from "@mantine/core";
 
 const App: FC = () => {
   return (
-    <Container size={400}>
+    <Container size={400} p={0}>
       <Main />
     </Container>
   );

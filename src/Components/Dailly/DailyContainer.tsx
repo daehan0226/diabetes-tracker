@@ -102,7 +102,7 @@ const DailyContainer: FC = () => {
   };
 
   return (
-    <Container m={20}>
+    <Container mt={20} p={0}>
       <Title order={3} align="center">
         Daily Diabetes Tracking
       </Title>
@@ -143,7 +143,6 @@ const DailyContainer: FC = () => {
               key={date}
               date={date}
               trackingInfo={trackingInfo}
-              formType={formType}
             ></DailyBox>
           ))}
         </>

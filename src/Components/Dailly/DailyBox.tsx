@@ -1,23 +1,19 @@
 import React, { FC } from "react";
-import { Container, ScrollArea, Title, Text, Flex } from "@mantine/core";
+import { Container, ScrollArea, Title, Badge, Text, Flex } from "@mantine/core";
 import { IDailyTrackInfo } from "../../@types/IDailyTrackingInfo";
-import { DailyFormType } from "../../@types/enums";
+interface DailyBoxProps extends IDailyTrackInfo {}
 
-interface DailyBoxProps extends IDailyTrackInfo {
-  formType: DailyFormType;
-}
-
-const DailyBox: FC<DailyBoxProps> = ({ trackingInfo, date, formType }) => {
+const DailyBox: FC<DailyBoxProps> = ({ trackingInfo, date }) => {
   return (
     <Container>
-      <Title order={5}>{date}</Title>
+      {/* <Title order={5}>{date}</Title> */}
+      <Badge color="pink" variant="light">
+        {date}
+      </Badge>
       <ScrollArea>
         <Flex>
-          {trackingInfo.map((info) => (
-            <Container
-              sx={{ textAlign: "center", height: 150 }}
-              key={info.type}
-            >
+          {trackingInfo.map((info, index) => (
+            <Container sx={{ textAlign: "center", height: 150 }} key={index}>
               <Text fz="md">{info.type}</Text>
               {info.bloodSugar ? (
                 <Text fz="lg">{info.bloodSugar}</Text>
