@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from "react";
-import { DailyFormType, MealType } from "../../@types/enums";
+import { DailyFormType, MealType } from "../../@types";
 import {
   Button,
   FileButton,
@@ -82,9 +82,11 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
         align="center"
         direction="column"
       >
-        <FileButton onChange={setFile} accept="image/png,image/jpeg">
-          {(props) => <Button {...props}>Upload image</Button>}
-        </FileButton>
+        {formType === DailyFormType.Image && (
+          <FileButton onChange={setFile} accept="image/png,image/jpeg">
+            {(props) => <Button {...props}>Upload image</Button>}
+          </FileButton>
+        )}
         <Button>Save</Button>
       </Flex>
     </Container>
