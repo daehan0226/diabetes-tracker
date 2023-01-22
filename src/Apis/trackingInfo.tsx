@@ -7,6 +7,8 @@ import {
   doc,
   getDocs,
   collection,
+  query,
+  where,
 } from "firebase/firestore";
 import { getEmail } from "../Hepler";
 
@@ -29,8 +31,10 @@ async function createTracking(newDoc: ITrackingInfo) {
   }
 }
 
-async function getTracking(): Promise<ITrackingInfo[]> {
-  const snapshot = await getDocs(collection(db, collectionName));
+async function getTracking(email: string): Promise<ITrackingInfo[]> {
+  const snapshot = await getDocs(
+    query(collection(db, collectionName), where("email", "==", email))
+  );
   return snapshot.docs.map((doc) => {
     const { time, text, type, bloodSugar, imageUrl, date } = doc.data();
     return { id: doc.id, text, time, date, type, bloodSugar, imageUrl };

@@ -7,7 +7,7 @@ interface Token {
   sub: string;
 }
 
-export const isValid = (): boolean => {
+export const isTokenValid = (): boolean => {
   const token = localStorage.getItem("token");
   if (token) {
     const decoded: Token = jwt_decode(token);
@@ -29,4 +29,8 @@ export const getEmail = (): string => {
     return decoded.email;
   }
   return "";
+};
+
+export const deleteToken = () => {
+  localStorage.removeItem("token");
 };

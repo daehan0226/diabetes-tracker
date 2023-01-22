@@ -11,7 +11,7 @@ import {
 import { DatePicker } from "@mantine/dates";
 import { createTracking } from "../../Apis";
 import { useNavigate } from "react-router-dom";
-import { isValid } from "../../Hepler";
+import { isTokenValid } from "../../Hepler";
 
 interface DailyFormProps {
   formType: DailyFormType;
@@ -33,8 +33,8 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
   // }, [type, file, bloodSugar, date, time, text]);
 
   useEffect(() => {
-    const isTokenValid = isValid();
-    if (!isTokenValid) {
+    const isValid = isTokenValid();
+    if (!isValid) {
       navigate("/");
     }
   }, []);
