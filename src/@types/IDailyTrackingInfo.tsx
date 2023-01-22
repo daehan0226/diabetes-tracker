@@ -1,4 +1,4 @@
-import { ITrackingInfo } from "./ITrackingInfo";
+import { ITrackingInfo } from "./";
 
 export interface IDailyTrackInfo {
   trackingInfo: ITrackingInfo[];

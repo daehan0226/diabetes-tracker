@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { Table } from "@mantine/core";
-import { IDailyTrackInfo } from "../../@types/IDailyTrackingInfo";
-import { MealType } from "../../@types/enums";
+import { IDailyTrackInfo, MealType } from "../../@types";
 
 interface DailyTableProps {
   data: IDailyTrackInfo[];
@@ -18,8 +17,8 @@ const DailyTable: FC<DailyTableProps> = ({ data }) => {
   const rows = data.map((ele) => (
     <tr key={ele.date}>
       <td>{ele.date}</td>
-      {tableCols.map((col) => (
-        <td key={col}>
+      {tableCols.map((col, index) => (
+        <td key={index}>
           {ele.trackingInfo.find((info) => info.type === col && info.bloodSugar)
             ?.bloodSugar ?? ""}
         </td>
@@ -28,7 +27,7 @@ const DailyTable: FC<DailyTableProps> = ({ data }) => {
   ));
 
   return (
-    <Table>
+    <Table withBorder withColumnBorders>
       <thead>
         <tr>
           <th>Date</th>
