@@ -30,7 +30,7 @@ const DailyFormStep: FC = () => {
   };
 
   return (
-    <Container size={400}>
+    <Container size={400} mt={40}>
       <Stepper active={active} onStepClick={setActive} breakpoint="sm">
         <Stepper.Step
           label="First step"
