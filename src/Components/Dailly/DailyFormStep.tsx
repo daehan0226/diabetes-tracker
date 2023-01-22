@@ -15,7 +15,6 @@ const DailyFormStep: FC = () => {
   const navigate = useNavigate();
   const [active, setActive] = useState<number>(0);
   const [formType, setFormType] = useState<DailyFormType>(DailyFormType.Image);
-  const [showForm, setShowForm] = useState<Boolean>(false);
 
   const showFormHandler = (type: DailyFormType) => {
     setFormType(type);
