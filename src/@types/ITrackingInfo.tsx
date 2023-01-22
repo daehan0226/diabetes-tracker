@@ -1,4 +1,4 @@
-import { MealType } from "./enums";
+import { MealType } from "./";
 
 export interface ITrackingInfo {
   type: MealType;

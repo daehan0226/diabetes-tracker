@@ -1,7 +1,15 @@
 import React from "react";
-import DailyContainer from "../Components/Dailly/DailyContainer";
+import { Route, Routes } from "react-router-dom";
+import { Login } from "../Components/Auth";
+import { DailyContainer, DailyFormStep } from "../Components/Dailly";
 function Main() {
-  return <DailyContainer />;
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/form" element={<DailyFormStep />} />
+      <Route path="/result" element={<DailyContainer />} />
+    </Routes>
+  );
 }
 
 export default Main;

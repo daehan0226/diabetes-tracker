@@ -1,12 +1,11 @@
 import React, { FC } from "react";
-import { Container, ScrollArea, Title, Badge, Text, Flex } from "@mantine/core";
-import { IDailyTrackInfo } from "../../@types/IDailyTrackingInfo";
+import { Container, ScrollArea, Badge, Text, Flex } from "@mantine/core";
+import { IDailyTrackInfo } from "../../@types";
 interface DailyBoxProps extends IDailyTrackInfo {}
 
 const DailyBox: FC<DailyBoxProps> = ({ trackingInfo, date }) => {
   return (
     <Container>
-      {/* <Title order={5}>{date}</Title> */}
       <Badge color="pink" variant="light">
         {date}
       </Badge>

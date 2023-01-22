@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from "react";
-import { DailyFormType, MealType } from "../../@types/enums";
+import { DailyFormType, MealType } from "../../@types";
 import {
   Button,
   FileButton,
