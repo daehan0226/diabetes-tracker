@@ -1,16 +1,13 @@
 import React, { FC, useEffect, useState } from "react";
-import { DailyFormType, MealType, IDailyTrackInfo } from "../../@types";
+import { MealType, IDailyTrackInfo } from "../../@types";
 import DailyBox from "./DailyBox";
-import DailyForm from "./DailyForm";
 import DailyTable from "./DailyTable";
-import { Button, Container, Flex, Title, CloseButton } from "@mantine/core";
+import { Button, Container, Title } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 
 const DailyContainer: FC = () => {
-  const [showForm, setShowForm] = useState<boolean>(false);
+  const navigate = useNavigate();
   const [displayTable, setDisplayTable] = useState<boolean>(false);
-  const [formType, setFormType] = useState<DailyFormType>(
-    DailyFormType.BloodSugar
-  );
 
   const data: IDailyTrackInfo[] = [
     {
@@ -95,40 +92,14 @@ const DailyContainer: FC = () => {
     },
   ];
 
-  const showFormHandler = (type: DailyFormType) => {
-    setFormType(type);
-    setShowForm(true);
-  };
-
   return (
     <Container mt={0} p={0}>
       <Title order={3} align="center">
         Daily Diabetes Tracking
       </Title>
-      <Flex m={15} justify="center" align="center" direction="column">
-        {showForm ? (
-          <>
-            <CloseButton
-              size="xl"
-              iconSize={20}
-              onClick={() => setShowForm(false)}
-            />
-            <DailyForm formType={formType} />
-          </>
-        ) : (
-          <>
-            <Button m={16} onClick={() => showFormHandler(DailyFormType.Image)}>
-              Food Image
-            </Button>
-            <Button
-              m={16}
-              onClick={() => showFormHandler(DailyFormType.BloodSugar)}
-            >
-              Blood Sugar Level
-            </Button>
-          </>
-        )}
-      </Flex>
+      <Button m={16} onClick={() => navigate("/form")}>
+        {"Add"}
+      </Button>
       <Button m={16} onClick={() => setDisplayTable(!displayTable)}>
         {displayTable ? "With images" : "Only numbers"}
       </Button>
