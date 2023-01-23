@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import { Flex, Title, Button } from "@mantine/core";
-import { deleteToken, getUserId } from "../Hepler";
+import { deleteToken, getUserId } from "../Helper";
 import { useNavigate } from "react-router-dom";
 import { useAuthDispatch, useAuthState } from "../Hookes";
 

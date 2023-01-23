@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Button, Container, Flex, Title, CloseButton } from "@mantine/core";
+import { Container } from "@mantine/core";
 
 function Footer() {
   return <Container></Container>;

@@ -1,4 +1,5 @@
 import AWS from "aws-sdk";
+import { setFilename } from "../Helper";
 
 const S3_BUCKET = process.env.REACT_APP_S3_BUCKET;
 const REGION = process.env.REACT_APP_S3_REGION;
@@ -12,9 +13,9 @@ const myBucket = new AWS.S3({
   region: REGION,
 });
 
-export const uploadFile = (userId: string, file: File) => {
+export const uploadFile = async (userId: string, file: File) => {
   try {
-    const Key = `${userId}/${file.name}`;
+    const Key = setFilename(userId, file.name);
     const params = {
       ACL: "public-read",
       Body: file,

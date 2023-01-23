@@ -1,22 +1,22 @@
 import React, { FC, useState, useEffect } from "react";
-import { DailyFormType, MealType } from "../../@types";
+import { MealType } from "../../@types";
 import {
   Button,
   FileButton,
-  Select,
   TextInput,
   Flex,
   Container,
   Image,
+  Title,
+  NumberInput,
 } from "@mantine/core";
-import { DatePicker } from "@mantine/dates";
-import { createTracking, uploadFile } from "../../Apis";
+import { createTracking, uploadFile, getTrackingBy } from "../../Apis";
 import { useNavigate } from "react-router-dom";
-import { isTokenValid } from "../../Hepler";
 import { useAuthState } from "../../Hookes";
+import { setDateFormat } from "../../Helper";
 
 interface DailyFormProps {
-  date: string;
+  date: Date;
   type: MealType;
 }
 
@@ -25,8 +25,8 @@ const DailyForm: FC<DailyFormProps> = ({ date, type }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
-  const [bloodSugar, setBloodSugar] = useState<number | undefined>(undefined);
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [bloodSugar, setBloodSugar] = useState<number>(0);
   const [file, setFile] = useState<File | null>(null);
 
   // useEffect(() => {
@@ -35,25 +35,43 @@ const DailyForm: FC<DailyFormProps> = ({ date, type }) => {
   // }, [type, file, bloodSugar, date, time, text]);
 
   useEffect(() => {
-    const isValid = isTokenValid();
-    if (!isValid) {
+    if (!state.loggedIn) {
       navigate("/");
     }
+  }, []);
+
+  useEffect(() => {
+    async function fetchDoc() {
+      const [doc, ...rest] = await getTrackingBy(
+        state.userId,
+        setDateFormat(date),
+        type
+      );
+      if (doc) {
+        const { text, imageUrl, bloodSugar } = doc;
+        if (text) setText(text);
+        if (imageUrl) setImageUrl(imageUrl);
+        if (bloodSugar) {
+          setBloodSugar(bloodSugar);
+        }
+      }
+    }
+    fetchDoc();
   }, []);
 
   const handleSubmit = async () => {
     setLoading(true);
     // 검증 로직 추가 필요
 
-    let imageUrl;
+    let newImageUrl;
     if (file) {
-      imageUrl = uploadFile(state.userId, file);
+      newImageUrl = await uploadFile(state.userId, file);
     }
-    const result = await createTracking({
-      date,
+    const result = await createTracking(state.userId, {
+      date: setDateFormat(date),
       type,
       bloodSugar,
-      imageUrl,
+      imageUrl: newImageUrl ?? imageUrl,
       text,
     });
     setLoading(false);
@@ -64,12 +82,16 @@ const DailyForm: FC<DailyFormProps> = ({ date, type }) => {
 
   return (
     <Container size={400}>
-      <TextInput
+      <Title order={4} color="blue" align="center">
+        {setDateFormat(date)} - {type}
+      </Title>
+      <NumberInput
         mt={20}
-        placeholder={"80"}
+        min={0}
+        max={500}
+        value={bloodSugar || 0}
         label="Blood Sugar Level"
-        type={"number"}
-        onChange={(event) => setBloodSugar(Number(event.currentTarget.value))}
+        onChange={(value) => setBloodSugar(value || 0)}
       />
       <TextInput
         mt={20}
@@ -93,22 +115,37 @@ const DailyForm: FC<DailyFormProps> = ({ date, type }) => {
               src={URL.createObjectURL(file)}
               alt="Preview image"
             />
+            <Button
+              onClick={() => {
+                setFile(null);
+              }}
+            >
+              Delete image
+            </Button>
           </>
         )}
-        {file ? (
-          <Button
-            onClick={() => {
-              setFile(null);
-            }}
-          >
-            Delete image
-          </Button>
-        ) : (
+        {imageUrl && (
+          <>
+            <Image
+              radius="md"
+              src={`${process.env.REACT_APP_S3_PATH}/${imageUrl}`}
+              alt="Preview image"
+            />
+            <Button
+              onClick={() => {
+                // delete from s3
+                setImageUrl("");
+              }}
+            >
+              Delete image
+            </Button>
+          </>
+        )}
+        {!file && !imageUrl && (
           <FileButton onChange={setFile} accept="image/png,image/jpeg">
             {(props) => <Button {...props}>Upload image</Button>}
           </FileButton>
         )}
-
         <Button
           loading={loading}
           onClick={() => {

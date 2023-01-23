@@ -4,7 +4,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { useAuthDispatch } from "../../Hookes";
-import { getUserId } from "../../Hepler";
+import { getUserId } from "../../Helper";
 
 function Login() {
   const navigate = useNavigate();

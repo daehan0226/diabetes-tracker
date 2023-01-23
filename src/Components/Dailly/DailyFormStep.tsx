@@ -1,14 +1,6 @@
-import React, { FC, useState, useEffect } from "react";
-import { DailyFormType, MealType } from "../../@types";
-import {
-  Container,
-  Flex,
-  CloseButton,
-  Button,
-  Select,
-  Stepper,
-  Group,
-} from "@mantine/core";
+import React, { FC, useState } from "react";
+import { MealType } from "../../@types";
+import { Container, Button, Select, Stepper, Group } from "@mantine/core";
 import { DailyForm } from "./";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "@mantine/dates";
@@ -16,8 +8,10 @@ import { DatePicker } from "@mantine/dates";
 const DailyFormStep: FC = () => {
   const navigate = useNavigate();
   const [active, setActive] = useState<number>(0);
-  const [type, setType] = useState<MealType>(MealType.Fasting);
-  const [date, setDate] = useState<string>("");
+  const [type, setType] = useState<MealType>(
+    (localStorage.getItem("mealType") as MealType) || MealType.Fasting
+  );
+  const [date, setDate] = useState<Date>(new Date());
 
   const prevStep = () => {
     if (active === 0) {
@@ -27,27 +21,9 @@ const DailyFormStep: FC = () => {
     }
   };
 
-  const setDateFormat = (date: Date | null) => {
-    if (date) {
-      localStorage.setItem("selectedDate", String(date.getTime()));
-      const y = String(date.getFullYear());
-      let m = String(date.getMonth() + 1);
-      let d = String(date.getDate());
-      if (m.length === 1) {
-        m = `0${m}`;
-      }
-      if (d.length === 1) {
-        d = `0${d}`;
-      }
-      setDate(`${y}-${m}-${d}`);
-    } else {
-      setDate("");
-      localStorage.removeItem("selectedDate");
-    }
-  };
-
   const setMealType = (value: MealType) => {
     if (value) {
+      localStorage.setItem("mealType", value);
       setType(value);
     }
   };
@@ -62,16 +38,15 @@ const DailyFormStep: FC = () => {
             label="Date"
             withAsterisk
             required
-            defaultValue={
-              localStorage.getItem("selectedDate")
-                ? new Date(Number(localStorage.getItem("selectedDate")))
-                : new Date()
-            }
-            onChange={(date) => setDateFormat(date)}
+            value={date}
+            onChange={(date) => {
+              if (date) setDate(date);
+            }}
+            minDate={new Date("2023-01-01")}
+            maxDate={new Date()}
           />
           <Select
             label="Meal"
-            placeholder="Fasting"
             onChange={setMealType}
             value={type}
             data={Object.values(MealType)}
@@ -80,7 +55,7 @@ const DailyFormStep: FC = () => {
           />
         </Stepper.Step>
         <Stepper.Step label="Second step" description="Save information">
-          <DailyForm date={date} type={type} />
+          {date && <DailyForm date={date} type={type} />}
         </Stepper.Step>
         <Stepper.Completed>Saved!</Stepper.Completed>
       </Stepper>
@@ -89,7 +64,7 @@ const DailyFormStep: FC = () => {
         <Button variant="default" onClick={prevStep}>
           {active === 0 ? "Past Result" : "Back"}
         </Button>
-        {date && type && (
+        {active === 0 && (
           <Button variant="default" onClick={() => setActive(1)}>
             Next
           </Button>

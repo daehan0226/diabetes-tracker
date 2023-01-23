@@ -1,8 +1,7 @@
 import { db } from "./";
-import { ITrackingInfo, MealType } from "../@types";
+import { ITrackingInfo, MealType, ITrackingInfoDoc } from "../@types";
 import {
   setDoc,
-  updateDoc,
   addDoc,
   doc,
   getDocs,
@@ -10,33 +9,16 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { getUserId } from "../Hepler";
-
 const collectionName = process.env.REACT_APP_FIREBASE_DILAY_TRACKING_COLLECTION;
 
-const removeUndefines = (doc: ITrackingInfo) => {
-  if (!doc.bloodSugar) {
-    delete doc.bloodSugar;
-  }
-  if (!doc.imageUrl) {
-    delete doc.imageUrl;
-  }
-};
-
-async function createTracking(newDoc: ITrackingInfo) {
-  removeUndefines(newDoc);
+async function createTracking(userId: string, newDoc: ITrackingInfo) {
   try {
-    const userId: string = getUserId();
     if (userId) {
       const oldDoc = await getTrackingBy(userId, newDoc.date, newDoc.type);
-      if (oldDoc && oldDoc.id) {
-        const upsertDoc = {
-          ...oldDoc,
+      if (oldDoc?.length > 0 && oldDoc[0].id) {
+        await setDoc(doc(db, collectionName, oldDoc[0].id), {
           ...newDoc,
-        };
-        console.log(upsertDoc);
-        await setDoc(doc(db, collectionName, oldDoc.id), {
-          ...upsertDoc,
+          userId,
         });
       } else {
         await addDoc(collection(db, collectionName), {
@@ -44,9 +26,9 @@ async function createTracking(newDoc: ITrackingInfo) {
           userId,
         });
       }
+      return true;
     }
-
-    return true;
+    return false;
   } catch (e) {
     console.log(e);
     return false;
@@ -63,27 +45,23 @@ async function getTracking(userId: string): Promise<ITrackingInfo[]> {
   });
 }
 
-interface ITrackingInfoDoc extends ITrackingInfo {
-  id: string;
-  userId: string;
-}
-
 async function getTrackingBy(
   userId: string,
   date: string,
-  type: MealType
-): Promise<ITrackingInfoDoc | null> {
+  type?: MealType
+): Promise<ITrackingInfoDoc[]> {
   let q = query(collection(db, collectionName), where("userId", "==", userId));
   q = query(q, where("date", "==", date));
-  q = query(q, where("type", "==", type));
+
+  if (type) {
+    q = query(q, where("type", "==", type));
+  }
 
   const snapshot = await getDocs(q);
-  if (snapshot.docs.length > 0) {
-    const tracking = snapshot.docs[0];
-    const { text, bloodSugar, imageUrl } = tracking.data();
-
+  return snapshot.docs.map((data) => {
+    const { text, bloodSugar, imageUrl, type } = data.data();
     return {
-      id: tracking.id,
+      id: data.id,
       date,
       type,
       text,
@@ -91,8 +69,7 @@ async function getTrackingBy(
       imageUrl,
       userId,
     };
-  }
-  return null;
+  });
 }
 
-export { createTracking, getTracking };
+export { createTracking, getTracking, getTrackingBy };

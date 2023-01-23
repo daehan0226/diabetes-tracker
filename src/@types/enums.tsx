@@ -3,7 +3,9 @@ export enum MealType {
   Breakfast = "Breakfast",
   Lunch = "Lunch",
   Dinner = "Dinner",
-  Snack = "Snack",
+  Snack_MORNING = "Snack(morning)",
+  Snack_AFTERNOON = "Snack(afternoon)",
+  Snack_NIGHT = "Snack(night)",
 }
 
 export enum DailyFormType {
