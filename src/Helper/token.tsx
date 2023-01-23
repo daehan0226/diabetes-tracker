@@ -19,14 +19,16 @@ export const isTokenValid = (): boolean => {
   return false;
 };
 
-export const getEmail = (): string => {
+export const getUserId = (): string => {
   const token = localStorage.getItem("token");
   if (token) {
     const decoded: Token = jwt_decode(token);
-    if (decoded.exp < new Date().getTime() / 1000) {
-      return "";
-    }
-    return decoded.email;
+
+    // TODO: expire time
+    // if (decoded.exp < new Date().getTime() / 1000) {
+    //   return "";
+    // }
+    return decoded.sub;
   }
   return "";
 };

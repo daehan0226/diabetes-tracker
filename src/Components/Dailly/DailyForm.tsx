@@ -1,30 +1,32 @@
 import React, { FC, useState, useEffect } from "react";
-import { DailyFormType, MealType } from "../../@types";
+import { MealType } from "../../@types";
 import {
   Button,
   FileButton,
-  Select,
   TextInput,
   Flex,
   Container,
+  Image,
+  Title,
+  NumberInput,
 } from "@mantine/core";
-import { DatePicker } from "@mantine/dates";
-import { createTracking } from "../../Apis";
+import { createTracking, uploadFile, getTrackingBy } from "../../Apis";
 import { useNavigate } from "react-router-dom";
-import { isTokenValid } from "../../Hepler";
+import { useAuthState } from "../../Hookes";
+import { setDateFormat } from "../../Helper";
 
 interface DailyFormProps {
-  formType: DailyFormType;
+  date: Date;
+  type: MealType;
 }
 
-const DailyForm: FC<DailyFormProps> = ({ formType }) => {
+const DailyForm: FC<DailyFormProps> = ({ date, type }) => {
+  const state = useAuthState();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const [type, setType] = useState<MealType>(MealType.Fasting);
-  const [date, setDate] = useState<string>("");
-  const [time, setTime] = useState<number>(0);
   const [text, setText] = useState<string>("");
-  const [bloodSugar, setBloodSugar] = useState<number>(80);
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [bloodSugar, setBloodSugar] = useState<number>(0);
   const [file, setFile] = useState<File | null>(null);
 
   // useEffect(() => {
@@ -33,20 +35,43 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
   // }, [type, file, bloodSugar, date, time, text]);
 
   useEffect(() => {
-    const isValid = isTokenValid();
-    if (!isValid) {
+    if (!state.loggedIn) {
       navigate("/");
     }
+  }, []);
+
+  useEffect(() => {
+    async function fetchDoc() {
+      const [doc, ...rest] = await getTrackingBy(
+        state.userId,
+        setDateFormat(date),
+        type
+      );
+      if (doc) {
+        const { text, imageUrl, bloodSugar } = doc;
+        if (text) setText(text);
+        if (imageUrl) setImageUrl(imageUrl);
+        if (bloodSugar) {
+          setBloodSugar(bloodSugar);
+        }
+      }
+    }
+    fetchDoc();
   }, []);
 
   const handleSubmit = async () => {
     setLoading(true);
     // 검증 로직 추가 필요
-    const result = await createTracking({
-      date,
+
+    let newImageUrl;
+    if (file) {
+      newImageUrl = await uploadFile(state.userId, file);
+    }
+    const result = await createTracking(state.userId, {
+      date: setDateFormat(date),
       type,
       bloodSugar,
-      time,
+      imageUrl: newImageUrl ?? imageUrl,
       text,
     });
     setLoading(false);
@@ -54,67 +79,20 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
       navigate("/result");
     }
   };
-  const setDateFormat = (date: Date | null) => {
-    if (date) {
-      const y = String(date.getFullYear());
-      let m = String(date.getMonth() + 1);
-      let d = String(date.getDate());
-      if (m.length === 1) {
-        m = `0${m}`;
-      }
-      if (d.length === 1) {
-        d = `0${d}`;
-      }
-      setDate(`${y}-${m}-${d}`);
-    } else {
-      setDate("");
-    }
-  };
-
-  const setMealType = (value: MealType) => {
-    if (value) {
-      setType(value);
-    }
-  };
 
   return (
     <Container size={400}>
-      <DatePicker
+      <Title order={4} color="blue" align="center">
+        {setDateFormat(date)} - {type}
+      </Title>
+      <NumberInput
         mt={20}
-        placeholder="Pick date"
-        label="Date"
-        withAsterisk
-        required
-        onChange={(date) => setDateFormat(date)}
+        min={0}
+        max={500}
+        value={bloodSugar || 0}
+        label="Blood Sugar Level"
+        onChange={(value) => setBloodSugar(value || 0)}
       />
-      <TextInput
-        mt={20}
-        required
-        label="Time"
-        placeholder="0000-2400"
-        maxLength={4}
-        onChange={(event) => setTime(Number(event.currentTarget.value))}
-      />
-      <Select
-        label="Meal"
-        placeholder="Fasting"
-        onChange={setMealType}
-        value={type}
-        data={Object.values(MealType)}
-        mt={20}
-        required
-      />
-
-      {formType === DailyFormType.BloodSugar && (
-        <TextInput
-          mt={20}
-          required
-          placeholder={"80"}
-          label="Blood Sugar Level"
-          type={"number"}
-          onChange={(event) => setBloodSugar(Number(event.currentTarget.value))}
-        />
-      )}
       <TextInput
         mt={20}
         label="Any comments"
@@ -130,7 +108,40 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
         align="center"
         direction="column"
       >
-        {formType === DailyFormType.Image && (
+        {file && (
+          <>
+            <Image
+              radius="md"
+              src={URL.createObjectURL(file)}
+              alt="Preview image"
+            />
+            <Button
+              onClick={() => {
+                setFile(null);
+              }}
+            >
+              Delete image
+            </Button>
+          </>
+        )}
+        {imageUrl && (
+          <>
+            <Image
+              radius="md"
+              src={`${process.env.REACT_APP_S3_PATH}/${imageUrl}`}
+              alt="Preview image"
+            />
+            <Button
+              onClick={() => {
+                // delete from s3
+                setImageUrl("");
+              }}
+            >
+              Delete image
+            </Button>
+          </>
+        )}
+        {!file && !imageUrl && (
           <FileButton onChange={setFile} accept="image/png,image/jpeg">
             {(props) => <Button {...props}>Upload image</Button>}
           </FileButton>

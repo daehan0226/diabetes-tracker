@@ -1,8 +1,7 @@
 import { db } from "./";
-import { ITrackingInfo } from "../@types";
+import { ITrackingInfo, MealType, ITrackingInfoDoc } from "../@types";
 import {
   setDoc,
-  updateDoc,
   addDoc,
   doc,
   getDocs,
@@ -10,35 +9,67 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { getEmail } from "../Hepler";
+const collectionName = process.env.REACT_APP_FIREBASE_DILAY_TRACKING_COLLECTION;
 
-const collectionName = "tracking";
-
-async function createTracking(newDoc: ITrackingInfo) {
+async function createTracking(userId: string, newDoc: ITrackingInfo) {
   try {
-    const email: string = getEmail();
-    if (email) {
-      const result = await addDoc(collection(db, collectionName), {
-        ...newDoc,
-        email,
-      });
+    if (userId) {
+      const oldDoc = await getTrackingBy(userId, newDoc.date, newDoc.type);
+      if (oldDoc?.length > 0 && oldDoc[0].id) {
+        await setDoc(doc(db, collectionName, oldDoc[0].id), {
+          ...newDoc,
+          userId,
+        });
+      } else {
+        await addDoc(collection(db, collectionName), {
+          ...newDoc,
+          userId,
+        });
+      }
+      return true;
     }
-
-    return true;
+    return false;
   } catch (e) {
     console.log(e);
     return false;
   }
 }
 
-async function getTracking(email: string): Promise<ITrackingInfo[]> {
+async function getTracking(userId: string): Promise<ITrackingInfo[]> {
   const snapshot = await getDocs(
-    query(collection(db, collectionName), where("email", "==", email))
+    query(collection(db, collectionName), where("userId", "==", userId))
   );
   return snapshot.docs.map((doc) => {
-    const { time, text, type, bloodSugar, imageUrl, date } = doc.data();
-    return { id: doc.id, text, time, date, type, bloodSugar, imageUrl };
+    const { text, type, bloodSugar, imageUrl, date } = doc.data();
+    return { id: doc.id, text, date, type, bloodSugar, imageUrl };
   });
 }
 
-export { createTracking, getTracking };
+async function getTrackingBy(
+  userId: string,
+  date: string,
+  type?: MealType
+): Promise<ITrackingInfoDoc[]> {
+  let q = query(collection(db, collectionName), where("userId", "==", userId));
+  q = query(q, where("date", "==", date));
+
+  if (type) {
+    q = query(q, where("type", "==", type));
+  }
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((data) => {
+    const { text, bloodSugar, imageUrl, type } = data.data();
+    return {
+      id: data.id,
+      date,
+      type,
+      text,
+      bloodSugar,
+      imageUrl,
+      userId,
+    };
+  });
+}
+
+export { createTracking, getTracking, getTrackingBy };
