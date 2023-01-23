@@ -18,7 +18,7 @@ const Header: FC = () => {
   }, []);
   return (
     <Flex direction={"column"} mt={16} h={60}>
-      <Title order={3} align="center">
+      <Title order={3} align="center" color="blue">
         Daily Diabetes Tracking
       </Title>
 

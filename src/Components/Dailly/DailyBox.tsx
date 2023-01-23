@@ -13,12 +13,16 @@ const DailyBox: FC<DailyBoxProps> = ({ date, data }) => {
         {date}
       </Badge>
       <ScrollArea>
-        <Flex>
+        <Flex justify={"flex-start"} align={"flex-start"}>
           {data.map((info, index) => (
-            <Container sx={{ textAlign: "center", height: 150 }} key={index}>
-              <Text fz="md">{info.type}</Text>
+            <Container sx={{ textAlign: "center", height: 100 }} key={index}>
+              <Text fz="md" color="blue">
+                {info.type}
+              </Text>
               {info.bloodSugar ? (
-                <Text fz="lg">{info.bloodSugar}</Text>
+                <Text fz="lg" color="blue">
+                  {info.bloodSugar}
+                </Text>
               ) : (
                 <img
                   src={info.imageUrl}

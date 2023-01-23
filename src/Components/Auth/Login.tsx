@@ -17,7 +17,7 @@ function Login() {
       align="center"
       direction="column"
     >
-      <Title order={4} align="center">
+      <Title order={4} align="center" color="blue">
         Login to save and review
       </Title>
       <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>

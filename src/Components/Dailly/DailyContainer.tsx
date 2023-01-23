@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { ITrackingInfo, IDailyTrackInfo } from "../../@types";
+import { ITrackingInfo, IDailyTrackInfo, MealType } from "../../@types";
 import DailyBox from "./DailyBox";
 import DailyTable from "./DailyTable";
 import { Button, Container } from "@mantine/core";
@@ -8,8 +8,15 @@ import { getTracking } from "../../Apis";
 import { getEmail } from "../../Hepler";
 
 const sort = (a: ITrackingInfo, b: ITrackingInfo) => {
-  if (a.time && b.time) {
-    return a.time - b.time;
+  const order = [
+    MealType.Fasting,
+    MealType.Breakfast,
+    MealType.Lunch,
+    MealType.Dinner,
+    MealType.Snack,
+  ];
+  if (a.type && b.type) {
+    return order.indexOf(a.type) - order.indexOf(b.type);
   }
   return -1;
 };

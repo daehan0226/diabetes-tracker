@@ -22,7 +22,6 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [type, setType] = useState<MealType>(MealType.Fasting);
   const [date, setDate] = useState<string>("");
-  const [time, setTime] = useState<number>(0);
   const [text, setText] = useState<string>("");
   const [bloodSugar, setBloodSugar] = useState<number>(80);
   const [file, setFile] = useState<File | null>(null);
@@ -46,7 +45,6 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
       date,
       type,
       bloodSugar,
-      time,
       text,
     });
     setLoading(false);
@@ -87,14 +85,14 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
         required
         onChange={(date) => setDateFormat(date)}
       />
-      <TextInput
+      {/* <TextInput
         mt={20}
         required
         label="Time"
         placeholder="0000-2400"
         maxLength={4}
         onChange={(event) => setTime(Number(event.currentTarget.value))}
-      />
+      /> */}
       <Select
         label="Meal"
         placeholder="Fasting"

@@ -36,8 +36,8 @@ async function getTracking(email: string): Promise<ITrackingInfo[]> {
     query(collection(db, collectionName), where("email", "==", email))
   );
   return snapshot.docs.map((doc) => {
-    const { time, text, type, bloodSugar, imageUrl, date } = doc.data();
-    return { id: doc.id, text, time, date, type, bloodSugar, imageUrl };
+    const { text, type, bloodSugar, imageUrl, date } = doc.data();
+    return { id: doc.id, text, date, type, bloodSugar, imageUrl };
   });
 }
 
