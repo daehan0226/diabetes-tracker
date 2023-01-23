@@ -1,3 +1,3 @@
-import { getEmail, isTokenValid, deleteToken } from "./token";
+import { getUserId, isTokenValid, deleteToken } from "./token";
 
-export { getEmail, isTokenValid, deleteToken };
+export { getUserId, isTokenValid, deleteToken };

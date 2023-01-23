@@ -4,6 +4,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { useAuthDispatch } from "../../Hookes";
+import { getUserId } from "../../Hepler";
 
 function Login() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ function Login() {
           onSuccess={(credentialResponse) => {
             if (credentialResponse.credential) {
               localStorage.setItem("token", credentialResponse.credential);
-              dispatch({ type: "LOG_IN" });
+              dispatch({ type: "LOG_IN", userId: getUserId() });
               navigate("/result");
             }
           }}

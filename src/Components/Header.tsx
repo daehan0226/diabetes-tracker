@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { Flex, Title, Button } from "@mantine/core";
-import { deleteToken, isTokenValid } from "../Hepler";
+import { deleteToken, getUserId } from "../Hepler";
 import { useNavigate } from "react-router-dom";
 import { useAuthDispatch, useAuthState } from "../Hookes";
 
@@ -9,9 +9,9 @@ const Header: FC = () => {
   const dispatch = useAuthDispatch();
   const navigate = useNavigate();
   useEffect(() => {
-    const result = isTokenValid();
-    if (result) {
-      dispatch({ type: "LOG_IN" });
+    const userId = getUserId();
+    if (userId) {
+      dispatch({ type: "LOG_IN", userId });
     } else {
       dispatch({ type: "LOG_OUT" });
     }

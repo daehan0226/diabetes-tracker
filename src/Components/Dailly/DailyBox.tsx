@@ -19,13 +19,14 @@ const DailyBox: FC<DailyBoxProps> = ({ date, data }) => {
               <Text fz="md" color="blue">
                 {info.type}
               </Text>
-              {info.bloodSugar ? (
+              {info.bloodSugar && (
                 <Text fz="lg" color="blue">
                   {info.bloodSugar}
                 </Text>
-              ) : (
+              )}
+              {info.imageUrl && (
                 <img
-                  src={info.imageUrl}
+                  src={`${process.env.REACT_APP_S3_PATH}/${info.imageUrl}`}
                   width="100px"
                   height="100px"
                   alt=""

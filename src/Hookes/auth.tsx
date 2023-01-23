@@ -2,9 +2,10 @@ import React, { useReducer, useContext, createContext, Dispatch } from "react";
 
 type State = {
   loggedIn: boolean;
+  userId: string; // GOOGLE GMAIL UID
 };
 
-type Action = { type: "LOG_IN" } | { type: "LOG_OUT" };
+type Action = { type: "LOG_IN"; userId: string } | { type: "LOG_OUT" };
 
 type TypeDispatch = Dispatch<Action>;
 
@@ -16,11 +17,13 @@ function reducer(state: State, action: Action): State {
     case "LOG_IN":
       return {
         ...state,
+        userId: action.userId,
         loggedIn: true,
       };
     case "LOG_OUT":
       return {
         ...state,
+        userId: "",
         loggedIn: false,
       };
     default:
@@ -30,6 +33,7 @@ function reducer(state: State, action: Action): State {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, {
     loggedIn: false,
+    userId: "",
   });
 
   return (

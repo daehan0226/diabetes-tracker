@@ -5,7 +5,7 @@ import DailyTable from "./DailyTable";
 import { Button, Container } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { getTracking } from "../../Apis";
-import { getEmail } from "../../Hepler";
+import { getUserId } from "../../Hepler";
 
 const sort = (a: ITrackingInfo, b: ITrackingInfo) => {
   const order = [
@@ -28,8 +28,8 @@ const DailyContainer: FC = () => {
 
   useEffect(() => {
     async function fetchTracking() {
-      const email = getEmail();
-      const data = await getTracking(email);
+      const userId = getUserId();
+      const data = await getTracking(userId);
       const dates = Array.from(new Set(data.map((item: any) => item.date)));
       let format: IDailyTrackInfo[] = [];
       for (const date of dates) {
@@ -38,6 +38,7 @@ const DailyContainer: FC = () => {
           trackingInfo: data.filter((d) => d.date === date).sort(sort),
         });
       }
+      console.log(format);
       setData([...format]);
     }
     fetchTracking();

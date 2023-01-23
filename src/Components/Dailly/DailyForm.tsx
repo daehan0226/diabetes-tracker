@@ -7,23 +7,27 @@ import {
   TextInput,
   Flex,
   Container,
+  Image,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
-import { createTracking } from "../../Apis";
+import { createTracking, uploadFile } from "../../Apis";
 import { useNavigate } from "react-router-dom";
 import { isTokenValid } from "../../Hepler";
+import { useAuthState } from "../../Hookes";
 
 interface DailyFormProps {
   formType: DailyFormType;
 }
 
 const DailyForm: FC<DailyFormProps> = ({ formType }) => {
+  const state = useAuthState();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [type, setType] = useState<MealType>(MealType.Fasting);
   const [date, setDate] = useState<string>("");
   const [text, setText] = useState<string>("");
-  const [bloodSugar, setBloodSugar] = useState<number>(80);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const [bloodSugar, setBloodSugar] = useState<number | undefined>(undefined);
   const [file, setFile] = useState<File | null>(null);
 
   // useEffect(() => {
@@ -41,10 +45,16 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
   const handleSubmit = async () => {
     setLoading(true);
     // 검증 로직 추가 필요
+
+    let imageUrl;
+    if (file) {
+      imageUrl = uploadFile(state.userId, file);
+    }
     const result = await createTracking({
       date,
       type,
       bloodSugar,
+      imageUrl,
       text,
     });
     setLoading(false);
@@ -85,14 +95,6 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
         required
         onChange={(date) => setDateFormat(date)}
       />
-      {/* <TextInput
-        mt={20}
-        required
-        label="Time"
-        placeholder="0000-2400"
-        maxLength={4}
-        onChange={(event) => setTime(Number(event.currentTarget.value))}
-      /> */}
       <Select
         label="Meal"
         placeholder="Fasting"
@@ -128,11 +130,29 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
         align="center"
         direction="column"
       >
-        {formType === DailyFormType.Image && (
+        {file && (
+          <>
+            <Image
+              radius="md"
+              src={URL.createObjectURL(file)}
+              alt="Preview image"
+            />
+          </>
+        )}
+        {file ? (
+          <Button
+            onClick={() => {
+              setFile(null);
+            }}
+          >
+            Delete image
+          </Button>
+        ) : (
           <FileButton onChange={setFile} accept="image/png,image/jpeg">
             {(props) => <Button {...props}>Upload image</Button>}
           </FileButton>
         )}
+
         <Button
           loading={loading}
           onClick={() => {
