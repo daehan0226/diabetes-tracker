@@ -3,9 +3,11 @@ import { Flex, Title } from "@mantine/core";
 import { GoogleLogin } from "@react-oauth/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
+import { useAuthDispatch } from "../../Hookes";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useAuthDispatch();
   return (
     <Flex
       h={400}
@@ -23,10 +25,12 @@ function Login() {
           onSuccess={(credentialResponse) => {
             if (credentialResponse.credential) {
               localStorage.setItem("token", credentialResponse.credential);
+              dispatch({ type: "LOG_IN" });
               navigate("/result");
             }
           }}
           onError={() => {
+            dispatch({ type: "LOG_OUT" });
             console.log("Login Failed");
           }}
         />

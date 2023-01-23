@@ -6,6 +6,7 @@ function Main() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/form" element={<DailyFormStep />} />
       <Route path="/result" element={<DailyContainer />} />
     </Routes>
