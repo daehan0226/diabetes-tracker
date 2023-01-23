@@ -16,15 +16,14 @@ import { isTokenValid } from "../../Hepler";
 import { useAuthState } from "../../Hookes";
 
 interface DailyFormProps {
-  formType: DailyFormType;
+  date: string;
+  type: MealType;
 }
 
-const DailyForm: FC<DailyFormProps> = ({ formType }) => {
+const DailyForm: FC<DailyFormProps> = ({ date, type }) => {
   const state = useAuthState();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const [type, setType] = useState<MealType>(MealType.Fasting);
-  const [date, setDate] = useState<string>("");
   const [text, setText] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [bloodSugar, setBloodSugar] = useState<number | undefined>(undefined);
@@ -62,59 +61,16 @@ const DailyForm: FC<DailyFormProps> = ({ formType }) => {
       navigate("/result");
     }
   };
-  const setDateFormat = (date: Date | null) => {
-    if (date) {
-      const y = String(date.getFullYear());
-      let m = String(date.getMonth() + 1);
-      let d = String(date.getDate());
-      if (m.length === 1) {
-        m = `0${m}`;
-      }
-      if (d.length === 1) {
-        d = `0${d}`;
-      }
-      setDate(`${y}-${m}-${d}`);
-    } else {
-      setDate("");
-    }
-  };
-
-  const setMealType = (value: MealType) => {
-    if (value) {
-      setType(value);
-    }
-  };
 
   return (
     <Container size={400}>
-      <DatePicker
+      <TextInput
         mt={20}
-        placeholder="Pick date"
-        label="Date"
-        withAsterisk
-        required
-        onChange={(date) => setDateFormat(date)}
+        placeholder={"80"}
+        label="Blood Sugar Level"
+        type={"number"}
+        onChange={(event) => setBloodSugar(Number(event.currentTarget.value))}
       />
-      <Select
-        label="Meal"
-        placeholder="Fasting"
-        onChange={setMealType}
-        value={type}
-        data={Object.values(MealType)}
-        mt={20}
-        required
-      />
-
-      {formType === DailyFormType.BloodSugar && (
-        <TextInput
-          mt={20}
-          required
-          placeholder={"80"}
-          label="Blood Sugar Level"
-          type={"number"}
-          onChange={(event) => setBloodSugar(Number(event.currentTarget.value))}
-        />
-      )}
       <TextInput
         mt={20}
         label="Any comments"
