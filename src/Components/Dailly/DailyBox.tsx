@@ -1,5 +1,14 @@
 import React, { FC, useState, useEffect } from "react";
-import { Card, Image, Text, Badge, Button, Group } from "@mantine/core";
+import {
+  Card,
+  Image,
+  Text,
+  Badge,
+  Container,
+  Group,
+  Button,
+  Modal,
+} from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useAuthState } from "../../Hookes";
 import { getTrackingBy } from "../../Apis";
@@ -8,6 +17,7 @@ import { ITrackingInfoDoc } from "../../@types";
 import { OrderByArray } from "../../Helper/sortHelper";
 
 const DailyBox: FC = () => {
+  const [fullImageUrl, setFullImageUrl] = useState<string>("");
   const [date, setDate] = useState<Date | null>(new Date());
   const [data, setData] = useState<ITrackingInfoDoc[]>([]);
   const state = useAuthState();
@@ -24,6 +34,13 @@ const DailyBox: FC = () => {
 
   return (
     <>
+      <Modal
+        opened={fullImageUrl !== ""}
+        onClose={() => setFullImageUrl("")}
+        fullScreen
+      >
+        <Image src={fullImageUrl} width={"100%"} alt={"Full image"} />
+      </Modal>
       <DatePicker
         mt={20}
         placeholder="Pick date"
@@ -43,29 +60,58 @@ const DailyBox: FC = () => {
           m={10}
         >
           {data.imageUrl ? (
-            <Card.Section>
+            <Card.Section sx={{ position: "relative" }}>
               <Image
                 src={`${process.env.REACT_APP_S3_PATH}/${data.imageUrl}`}
                 height={160}
                 alt={`${data.type}`}
               />
+              <Button
+                sx={{ position: "absolute", right: 10, top: 10, opacity: 0.9 }}
+                w={30}
+                p={0}
+                h={30}
+                onClick={() =>
+                  setFullImageUrl(
+                    `${process.env.REACT_APP_S3_PATH}/${data.imageUrl}`
+                  )
+                }
+              >
+                +
+              </Button>
             </Card.Section>
           ) : null}
 
           <Group position="apart" mt="md" mb="xs">
             <Text weight={500}>{data.type}</Text>
-            <Badge color="pink" variant="light">
-              {data.bloodSugar ? data.bloodSugar : null}
-            </Badge>
+            {data.bloodSugar ? (
+              <Badge color="pink" variant="light" size={"lg"}>
+                {data.bloodSugar}
+              </Badge>
+            ) : null}
           </Group>
 
-          <Text size="sm" color="dimmed">
-            {data.text}
-          </Text>
-
-          <Button variant="light" color="blue" fullWidth mt="md" radius="md">
-            {data.text}
-          </Button>
+          {data.text ? (
+            <Container
+              mt="md"
+              bg="rgb(231, 245, 255)"
+              mih={40}
+              p={10}
+              sx={{ borderRadius: 5 }}
+            >
+              <Text
+                size="sm"
+                color="rgb(34, 139, 230)"
+                sx={{
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                  wordWrap: "break-word",
+                }}
+              >
+                {data.text}{" "}
+              </Text>
+            </Container>
+          ) : null}
         </Card>
       ))}
     </>
