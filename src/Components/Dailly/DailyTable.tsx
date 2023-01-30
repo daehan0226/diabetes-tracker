@@ -1,88 +1,11 @@
 import React, { FC, useState } from "react";
 import { Table } from "@mantine/core";
 import { IDailyTrackInfo, ITrackingInfo, MealType } from "../../@types";
-import { Button, NumberInput } from "@mantine/core";
-import { createTracking, getTracking } from "../../Apis";
+import { getTracking } from "../../Apis";
 import { useAuthState } from "../../Hookes";
 import { OrderByArray, setDateFormat } from "../../Helper";
 import { DatePicker } from "@mantine/dates";
-
-interface DailyTableProps {
-  data: IDailyTrackInfo[];
-  refresh: () => {};
-}
-
-const tableCols = [
-  MealType.Fasting,
-  MealType.Breakfast,
-  MealType.Lunch,
-  MealType.Dinner,
-];
-
-const tableCellKey = (date: string, col: MealType) => {
-  return `${date}_${col}`;
-};
-
-const TableRow: FC<DailyTableProps> = ({ data, refresh }) => {
-  const state = useAuthState();
-  const [bloodSugar, setBloodSugar] = useState<number>(0);
-  const [editEle, setEditEle] = useState<string>("");
-
-  const handleSubmit = async (date: string, type: MealType) => {
-    await createTracking(state.userId, {
-      date,
-      type,
-      bloodSugar,
-    });
-    setEditEle("");
-    refresh();
-  };
-
-  return (
-    <>
-      {data.map(({ date, trackingInfo }) => (
-        <tr key={date}>
-          <td>{date}</td>
-          {tableCols.map((col) => (
-            <td
-              key={tableCellKey(date, col)}
-              onClick={() => {
-                setEditEle(tableCellKey(date, col));
-              }}
-            >
-              {editEle === tableCellKey(date, col) ? (
-                <>
-                  <NumberInput
-                    sx={{ width: 70 }}
-                    min={0}
-                    max={500}
-                    value={
-                      trackingInfo.find(
-                        (info) => info.type === col && info.bloodSugar
-                      )?.bloodSugar ?? 0
-                    }
-                    onChange={(value) => setBloodSugar(Number(value))}
-                  />
-                  <Button mt={10} onClick={() => handleSubmit(date, col)}>
-                    Save
-                  </Button>
-                </>
-              ) : (
-                <>
-                  {trackingInfo.find(
-                    (info) => info.type === col && info.bloodSugar
-                  )?.bloodSugar ?? (
-                    <Button sx={{ cursor: "pointer" }}>Edit</Button>
-                  )}
-                </>
-              )}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </>
-  );
-};
+import { TableRow } from "./Table";
 
 const setDailyData = (
   data: ITrackingInfo[],
