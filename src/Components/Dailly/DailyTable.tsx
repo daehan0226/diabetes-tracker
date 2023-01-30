@@ -5,6 +5,7 @@ import { Button, NumberInput } from "@mantine/core";
 import { createTracking, getTracking } from "../../Apis";
 import { useAuthState } from "../../Hookes";
 import { OrderByArray, setDateFormat } from "../../Helper";
+import { DatePicker } from "@mantine/dates";
 
 interface DailyTableProps {
   data: IDailyTrackInfo[];
@@ -70,7 +71,9 @@ const TableRow: FC<DailyTableProps> = ({ data, refresh }) => {
                 <>
                   {trackingInfo.find(
                     (info) => info.type === col && info.bloodSugar
-                  )?.bloodSugar ?? "+"}
+                  )?.bloodSugar ?? (
+                    <Button sx={{ cursor: "pointer" }}>Edit</Button>
+                  )}
                 </>
               )}
             </td>
@@ -81,7 +84,10 @@ const TableRow: FC<DailyTableProps> = ({ data, refresh }) => {
   );
 };
 
-const setDailyData = (data: ITrackingInfo[]): IDailyTrackInfo[] => {
+const setDailyData = (
+  data: ITrackingInfo[],
+  addDate?: Date
+): IDailyTrackInfo[] => {
   const dates = Array.from(new Set(data.map((item: any) => item.date)));
   let format: IDailyTrackInfo[] = [];
   for (const date of dates) {
@@ -93,12 +99,14 @@ const setDailyData = (data: ITrackingInfo[]): IDailyTrackInfo[] => {
       ),
     });
   }
-  const today = setDateFormat(new Date());
-  if (!dates.includes(today)) {
-    format.push({
-      date: today,
-      trackingInfo: [],
-    });
+  if (addDate) {
+    const date = setDateFormat(addDate);
+    if (!dates.includes(date)) {
+      format.push({
+        date,
+        trackingInfo: [],
+      });
+    }
   }
   format.sort((a, b) => (a.date > b.date ? -1 : 1));
   return format;
@@ -106,35 +114,57 @@ const setDailyData = (data: ITrackingInfo[]): IDailyTrackInfo[] => {
 
 const DailyTable: FC = () => {
   const [data, setData] = useState<IDailyTrackInfo[]>([]);
+  const [addDate, setAddDate] = useState<Date>(new Date());
   const state = useAuthState();
 
   React.useEffect(() => {
     async function fetch() {
-      await fetchTracking();
+      await fetchTracking(addDate);
     }
     fetch();
   }, []);
 
-  const fetchTracking = async () => {
+  const fetchTracking = async (addDate?: Date) => {
     const data = await getTracking(state.userId);
-    setData([...setDailyData(data)]);
+    setData([...setDailyData(data, addDate)]);
   };
 
+  React.useEffect(() => {
+    async function addDateHandler() {
+      await fetchTracking(addDate);
+    }
+    addDateHandler();
+  }, [addDate]);
+
   return (
-    <Table withBorder withColumnBorders>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Fasting</th>
-          <th>Breakfast</th>
-          <th>Lunch</th>
-          <th>Dinner</th>
-        </tr>
-      </thead>
-      <tbody>
-        <TableRow data={data} refresh={fetchTracking} />
-      </tbody>
-    </Table>
+    <>
+      <DatePicker
+        mt={20}
+        label="Add date"
+        withAsterisk
+        required
+        value={addDate}
+        onChange={(date) => {
+          if (date) setAddDate(date);
+        }}
+        minDate={new Date("2023-01-01")}
+        maxDate={new Date()}
+      />
+      <Table withBorder withColumnBorders>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Fasting</th>
+            <th>Breakfast</th>
+            <th>Lunch</th>
+            <th>Dinner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <TableRow data={data} refresh={fetchTracking} />
+        </tbody>
+      </Table>
+    </>
   );
 };
 
