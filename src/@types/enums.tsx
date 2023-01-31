@@ -12,3 +12,9 @@ export enum DailyFormType {
   Image = "Image",
   BloodSugar = "BloodSugar",
 }
+
+export enum DisplayType {
+  MONTH = "MONTH",
+  DAY = "DAY",
+  GRAPH = "GRAPH",
+}

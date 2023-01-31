@@ -41,12 +41,15 @@ interface TableCellProps {
 const TableCell: FC<TableCellProps> = ({ number, type }) => {
   if (number) {
     return (
-      <Text color={number > getWarningNumber(type) ? "red" : "black"}>
+      <Text
+        sx={{ cursor: "pointer" }}
+        color={number > getWarningNumber(type) ? "red" : "black"}
+      >
         {number}
       </Text>
     );
   }
-  return <>__</>;
+  return <Text sx={{ cursor: "pointer" }}>__</Text>;
 };
 
 const TableRow: FC<DailyTableProps> = ({ data, refresh }) => {

@@ -1,22 +1,35 @@
 import React, { FC, useState } from "react";
 import DailyBox from "./DailyBox";
 import DailyTable from "./DailyTable";
-import { Button, Container } from "@mantine/core";
+import { Button, Container, Flex } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import { DisplayType } from "../../@types";
 
 const DailyContainer: FC = () => {
   const navigate = useNavigate();
-  const [displayTable, setDisplayTable] = useState<boolean>(false);
+  const [displayType, setDisplayType] = useState<DisplayType>(
+    DisplayType.MONTH
+  );
 
   return (
     <Container mt={0} p={0}>
       <Button m={16} onClick={() => navigate("/form")}>
         {"Add"}
       </Button>
-      <Button m={16} onClick={() => setDisplayTable(!displayTable)}>
-        {displayTable ? "With images" : "Only numbers"}
-      </Button>
-      {displayTable ? <DailyTable /> : <DailyBox />}
+      <Flex align={"center"} justify={"center"}>
+        {Object.values(DisplayType).map((display, index) => (
+          <Button
+            key={`display_${displayType}_${index}`}
+            m={8}
+            onClick={() => setDisplayType(display)}
+          >
+            {display}
+          </Button>
+        ))}
+      </Flex>
+      {displayType === DisplayType.MONTH ? <DailyTable /> : null}
+      {displayType === DisplayType.DAY ? <DailyBox /> : null}
+      {displayType === DisplayType.GRAPH ? <>....</> : null}
     </Container>
   );
 };

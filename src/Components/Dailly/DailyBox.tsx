@@ -42,7 +42,7 @@ const DailyBox: FC = () => {
         <Image src={fullImageUrl} width={"100%"} alt={"Full image"} />
       </Modal>
       <DatePicker
-        mt={20}
+        m={20}
         placeholder="Pick date"
         label="Date"
         withAsterisk
