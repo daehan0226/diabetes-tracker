@@ -18,3 +18,7 @@ export enum DisplayType {
   DAY = "DAY",
   GRAPH = "GRAPH",
 }
+
+export enum AuthProvider {
+  GOGGLE = "google",
+}

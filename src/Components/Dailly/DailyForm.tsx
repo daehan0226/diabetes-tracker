@@ -10,9 +10,9 @@ import {
   Title,
   NumberInput,
 } from "@mantine/core";
-import { createTracking, uploadFile, getTrackingBy } from "../../Apis";
+import { createTracking, uploadFile } from "../../Apis";
 import { useNavigate } from "react-router-dom";
-import { useAuthState } from "../../Hookes";
+import { useAuthState, useRecordState } from "../../Hookes";
 import { setDateFormat } from "../../Helper";
 
 interface DailyFormProps {
@@ -28,6 +28,7 @@ const DailyForm: FC<DailyFormProps> = ({ date, type }) => {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [bloodSugar, setBloodSugar] = useState<number>(0);
   const [file, setFile] = useState<File | null>(null);
+  const recordState = useRecordState();
 
   // useEffect(() => {
   // 검증 로직 추가 필요
@@ -42,10 +43,8 @@ const DailyForm: FC<DailyFormProps> = ({ date, type }) => {
 
   useEffect(() => {
     async function fetchDoc() {
-      const [doc, ...rest] = await getTrackingBy(
-        state.userId,
-        setDateFormat(date),
-        type
+      const doc = recordState.data.find(
+        (r) => r.date === setDateFormat(date) && r.type === type
       );
       if (doc) {
         const { text, imageUrl, bloodSugar } = doc;

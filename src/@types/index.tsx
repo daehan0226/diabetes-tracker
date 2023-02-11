@@ -1,4 +1,4 @@
-import { MealType, DailyFormType, DisplayType } from "./enums";
+import { MealType, DailyFormType, DisplayType, AuthProvider } from "./enums";
 import { IDailyTrackInfo } from "./IDailyTrackingInfo";
 import { ITrackingInfo } from "./ITrackingInfo";
 import { ITrackingInfoDoc } from "./ITrackingInfoDoc";
@@ -10,4 +10,5 @@ export {
   MealType,
   DailyFormType,
   DisplayType,
+  AuthProvider,
 };

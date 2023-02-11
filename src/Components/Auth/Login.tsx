@@ -4,7 +4,8 @@ import { GoogleLogin } from "@react-oauth/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { useAuthDispatch } from "../../Hookes";
-import { getUserId } from "../../Helper";
+import { authLogin } from "../../Apis";
+import { AuthProvider } from "../../@types";
 
 function Login() {
   const navigate = useNavigate();
@@ -23,11 +24,19 @@ function Login() {
       </Title>
       <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
         <GoogleLogin
-          onSuccess={(credentialResponse) => {
+          onSuccess={async (credentialResponse) => {
             if (credentialResponse.credential) {
-              localStorage.setItem("token", credentialResponse.credential);
-              dispatch({ type: "LOG_IN", userId: getUserId() });
-              navigate("/result");
+              const userId = await authLogin(
+                AuthProvider.GOGGLE,
+                credentialResponse.credential
+              );
+              if (userId) {
+                dispatch({ type: "LOG_IN", userId });
+                navigate("/result");
+              } else {
+                dispatch({ type: "LOG_OUT" });
+                console.log("Login Failed");
+              }
             }
           }}
           onError={() => {

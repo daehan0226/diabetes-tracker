@@ -1,21 +1,31 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import DailyBox from "./DailyBox";
 import DailyTable from "./DailyTable";
 import { Button, Container, Flex } from "@mantine/core";
-import { useNavigate } from "react-router-dom";
 import { DisplayType } from "../../@types";
+import { useAuthState, useRecordDispatch } from "../../Hookes";
+import { getTracking } from "../../Apis";
 
 const DailyContainer: FC = () => {
-  const navigate = useNavigate();
   const [displayType, setDisplayType] = useState<DisplayType>(
     DisplayType.MONTH
   );
+  const recordDispatch = useRecordDispatch();
+  const authState = useAuthState();
+
+  useEffect(() => {
+    async function fetchRecords() {
+      if (authState.userId) {
+        const data = await getTracking(authState.userId);
+        recordDispatch({ type: "STORE_DATA", data });
+      }
+    }
+    recordDispatch({ type: "FETCH_DATA" });
+    fetchRecords();
+  }, []);
 
   return (
     <Container mt={0} p={0}>
-      <Button m={16} onClick={() => navigate("/form")}>
-        {"Add"}
-      </Button>
       <Flex align={"center"} justify={"center"}>
         {Object.values(DisplayType).map((display, index) => (
           <Button

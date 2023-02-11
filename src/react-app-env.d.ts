@@ -15,5 +15,6 @@ declare namespace NodeJS {
     REACT_APP_S3_REGION: string;
     REACT_APP_S3_ACCESS_KEY_ID: string;
     REACT_APP_S3_SECRET_ACCESS_KEY: string;
+    REACT_APP_API: string;
   }
 }

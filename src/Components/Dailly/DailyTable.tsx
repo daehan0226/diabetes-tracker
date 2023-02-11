@@ -1,8 +1,7 @@
 import React, { FC, useState } from "react";
 import { Table } from "@mantine/core";
 import { IDailyTrackInfo, ITrackingInfo, MealType } from "../../@types";
-import { getTracking } from "../../Apis";
-import { useAuthState } from "../../Hookes";
+import { useRecordState } from "../../Hookes";
 import { OrderByArray, setDateFormat } from "../../Helper";
 import { DatePicker } from "@mantine/dates";
 import { TableRow } from "./Table";
@@ -35,10 +34,13 @@ const setDailyData = (
   return format;
 };
 
+const minDate = "2023-01-01";
+const cols = ["Date", "Fasting", "Breakfast", "Lunch", "Dinner"];
+
 const DailyTable: FC = () => {
   const [data, setData] = useState<IDailyTrackInfo[]>([]);
   const [addDate, setAddDate] = useState<Date>(new Date());
-  const state = useAuthState();
+  const recordState = useRecordState();
 
   React.useEffect(() => {
     async function fetch() {
@@ -48,7 +50,7 @@ const DailyTable: FC = () => {
   }, []);
 
   const fetchTracking = async (addDate?: Date) => {
-    const data = await getTracking(state.userId);
+    const data = recordState.data;
     setData([...setDailyData(data, addDate)]);
   };
 
@@ -70,17 +72,15 @@ const DailyTable: FC = () => {
         onChange={(date) => {
           if (date) setAddDate(date);
         }}
-        minDate={new Date("2023-01-01")}
+        minDate={new Date(minDate)}
         maxDate={new Date()}
       />
       <Table withBorder withColumnBorders>
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Fasting</th>
-            <th>Breakfast</th>
-            <th>Lunch</th>
-            <th>Dinner</th>
+            {cols.map((col) => (
+              <th key={`table-col-${col}`}>{col}</th>
+            ))}
           </tr>
         </thead>
         <tbody>

@@ -10,27 +10,31 @@ import {
   Modal,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
-import { useAuthState } from "../../Hookes";
-import { getTrackingBy } from "../../Apis";
+import { useNavigate } from "react-router-dom";
+import { useAuthState, useRecordState } from "../../Hookes";
 import { setDateFormat } from "../../Helper";
 import { ITrackingInfoDoc } from "../../@types";
 import { OrderByArray } from "../../Helper/sortHelper";
 
 const DailyBox: FC = () => {
+  const navigate = useNavigate();
   const [fullImageUrl, setFullImageUrl] = useState<string>("");
   const [date, setDate] = useState<Date | null>(new Date());
   const [data, setData] = useState<ITrackingInfoDoc[]>([]);
-  const state = useAuthState();
+  const authState = useAuthState();
+  const recordState = useRecordState();
 
   useEffect(() => {
     async function fetchTracking() {
-      if (date && state.loggedIn) {
-        const data = await getTrackingBy(state.userId, setDateFormat(date));
-        setData(OrderByArray([...data], "type"));
+      if (date && authState.loggedIn) {
+        const selectedDateRecords =
+          recordState?.data?.filter((r) => r.date === setDateFormat(date)) ??
+          [];
+        setData(OrderByArray([...selectedDateRecords], "type"));
       }
     }
     fetchTracking();
-  }, [date, state.loggedIn]);
+  }, [date, authState.loggedIn]);
 
   return (
     <>
@@ -50,6 +54,9 @@ const DailyBox: FC = () => {
         value={date}
         onChange={(date) => setDate(date)}
       />
+      <Button m={16} onClick={() => navigate("/form")}>
+        {"Add Image"}
+      </Button>
       {data.map((data) => (
         <Card
           key={`${date}_${data.type}`}
