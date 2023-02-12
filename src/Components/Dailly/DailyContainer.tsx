@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useState } from "react";
 import DailyBox from "./DailyBox";
 import DailyTable from "./DailyTable";
-import { Button, Container, Flex } from "@mantine/core";
+import { Button, Container, Flex, useMantineTheme } from "@mantine/core";
 import { DisplayType } from "../../@types";
 import { useAuthState, useRecordDispatch } from "../../Hookes";
 import { getTracking } from "../../Apis";
 import { LineChartComponent } from "./Chart";
+import { useMediaQuery } from "@mantine/hooks";
 
 const DailyContainer: FC = () => {
   const [displayType, setDisplayType] = useState<DisplayType>(
@@ -13,6 +14,8 @@ const DailyContainer: FC = () => {
   );
   const recordDispatch = useRecordDispatch();
   const authState = useAuthState();
+  const { breakpoints } = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${breakpoints.xs}px)`);
 
   useEffect(() => {
     async function fetchRecords() {
@@ -43,7 +46,7 @@ const DailyContainer: FC = () => {
           <LineChartComponent />
         </Container>
       ) : null}
-      <Container mt={0} p={0} w={300} h={200}>
+      <Container mt={0} p={0} w={isMobile ? "100%" : 500} h={200}>
         {displayType === DisplayType.MONTH ? <DailyTable /> : null}
         {displayType === DisplayType.DAY ? <DailyBox /> : null}
       </Container>
