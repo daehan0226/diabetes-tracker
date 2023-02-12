@@ -64,7 +64,7 @@ const DailyTable: FC = () => {
   return (
     <>
       <DatePicker
-        m={20}
+        mb={20}
         label="Add date"
         withAsterisk
         required
