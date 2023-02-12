@@ -22,7 +22,7 @@ const DailyContainer: FC = () => {
     }
     recordDispatch({ type: "FETCH_DATA" });
     fetchRecords();
-  }, []);
+  }, [authState.userId]);
 
   return (
     <Container mt={0} p={0}>

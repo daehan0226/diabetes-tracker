@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
 
-interface Token {
+export interface Token {
   name: string;
   email: string;
   exp: number;

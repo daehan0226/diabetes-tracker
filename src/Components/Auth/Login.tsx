@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuthDispatch } from "../../Hookes";
 import { authLogin } from "../../Apis";
 import { AuthProvider } from "../../@types";
+import jwt_decode from "jwt-decode";
+import { Token } from "../../Helper";
 
 function Login() {
   const navigate = useNavigate();
@@ -26,12 +28,14 @@ function Login() {
         <GoogleLogin
           onSuccess={async (credentialResponse) => {
             if (credentialResponse.credential) {
-              const userId = await authLogin(
-                AuthProvider.GOGGLE,
-                credentialResponse.credential
-              );
-              if (userId) {
-                dispatch({ type: "LOG_IN", userId });
+              localStorage.setItem("token", credentialResponse.credential);
+              const decoded: Token = jwt_decode(credentialResponse.credential);
+              // const userId = await authLogin(
+              //   AuthProvider.GOGGLE,
+              //   credentialResponse.credential
+              // );
+              if (decoded?.sub) {
+                dispatch({ type: "LOG_IN", userId: decoded.sub });
                 navigate("/result");
               } else {
                 dispatch({ type: "LOG_OUT" });

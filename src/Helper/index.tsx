@@ -1,4 +1,4 @@
-import { getUserId, isTokenValid, deleteToken } from "./token";
+import { getUserId, isTokenValid, deleteToken, Token } from "./token";
 import { setDateFormat } from "./dateHelper";
 import { setFilename } from "./fileHelper";
 import { OrderByArray } from "./sortHelper";
@@ -10,4 +10,5 @@ export {
   setDateFormat,
   setFilename,
   OrderByArray,
+  type Token,
 };

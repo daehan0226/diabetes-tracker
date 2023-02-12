@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useNavigate } from "react-router-dom";
-import { useAuthState, useRecordState } from "../../Hookes";
+import { useRecordState } from "../../Hookes";
 import { setDateFormat } from "../../Helper";
 import { ITrackingInfoDoc } from "../../@types";
 import { OrderByArray } from "../../Helper/sortHelper";
@@ -21,12 +21,11 @@ const DailyBox: FC = () => {
   const [fullImageUrl, setFullImageUrl] = useState<string>("");
   const [date, setDate] = useState<Date | null>(new Date());
   const [data, setData] = useState<ITrackingInfoDoc[]>([]);
-  const authState = useAuthState();
   const recordState = useRecordState();
 
   useEffect(() => {
     async function fetchTracking() {
-      if (date && authState.loggedIn) {
+      if (date && recordState.data) {
         const selectedDateRecords =
           recordState?.data?.filter((r) => r.date === setDateFormat(date)) ??
           [];
@@ -34,7 +33,7 @@ const DailyBox: FC = () => {
       }
     }
     fetchTracking();
-  }, [date, authState.loggedIn]);
+  }, [date, recordState.data]);
 
   return (
     <>

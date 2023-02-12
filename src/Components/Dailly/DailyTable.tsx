@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react";
 import { Table } from "@mantine/core";
 import { IDailyTrackInfo, ITrackingInfo, MealType } from "../../@types";
-import { useRecordState } from "../../Hookes";
+import { useAuthState, useRecordState } from "../../Hookes";
 import { OrderByArray, setDateFormat } from "../../Helper";
 import { DatePicker } from "@mantine/dates";
 import { TableRow } from "./Table";
@@ -47,7 +47,7 @@ const DailyTable: FC = () => {
       await fetchTracking(addDate);
     }
     fetch();
-  }, []);
+  }, [recordState.data]);
 
   const fetchTracking = async (addDate?: Date) => {
     const data = recordState.data;
