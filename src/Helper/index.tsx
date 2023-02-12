@@ -1,7 +1,7 @@
 import { getUserId, isTokenValid, deleteToken, Token } from "./token";
 import { setDateFormat } from "./dateHelper";
 import { setFilename } from "./fileHelper";
-import { OrderByArray } from "./sortHelper";
+import { OrderByArray, setDailyObjectArray } from "./sortHelper";
 
 export {
   getUserId,
@@ -10,5 +10,6 @@ export {
   setDateFormat,
   setFilename,
   OrderByArray,
+  setDailyObjectArray,
   type Token,
 };

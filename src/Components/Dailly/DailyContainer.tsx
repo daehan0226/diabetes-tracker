@@ -5,6 +5,7 @@ import { Button, Container, Flex } from "@mantine/core";
 import { DisplayType } from "../../@types";
 import { useAuthState, useRecordDispatch } from "../../Hookes";
 import { getTracking } from "../../Apis";
+import { LineChartComponent } from "./Chart";
 
 const DailyContainer: FC = () => {
   const [displayType, setDisplayType] = useState<DisplayType>(
@@ -25,7 +26,7 @@ const DailyContainer: FC = () => {
   }, [authState.userId]);
 
   return (
-    <Container mt={0} p={0}>
+    <>
       <Flex align={"center"} justify={"center"}>
         {Object.values(DisplayType).map((display, index) => (
           <Button
@@ -37,10 +38,16 @@ const DailyContainer: FC = () => {
           </Button>
         ))}
       </Flex>
-      {displayType === DisplayType.MONTH ? <DailyTable /> : null}
-      {displayType === DisplayType.DAY ? <DailyBox /> : null}
-      {displayType === DisplayType.GRAPH ? <>....</> : null}
-    </Container>
+      {displayType === DisplayType.GRAPH ? (
+        <Container w={1000} h={800}>
+          <LineChartComponent />
+        </Container>
+      ) : null}
+      <Container mt={0} p={0} w={300} h={200}>
+        {displayType === DisplayType.MONTH ? <DailyTable /> : null}
+        {displayType === DisplayType.DAY ? <DailyBox /> : null}
+      </Container>
+    </>
   );
 };
 
