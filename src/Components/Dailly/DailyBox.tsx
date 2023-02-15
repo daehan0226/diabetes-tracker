@@ -16,9 +16,50 @@ import { setDateFormat } from "../../Helper";
 import { ITrackingInfoDoc } from "../../@types";
 import { OrderByArray } from "../../Helper/sortHelper";
 
+interface DailyInfoCardProps {
+  data: ITrackingInfoDoc;
+}
+
+const DailyInfoCard: FC<DailyInfoCardProps> = ({ data }) => {
+  return (
+    <>
+      <Group position="apart" mt="md" mb="xs">
+        <Text weight={500}>{data.type}</Text>
+        {data.bloodSugar ? (
+          <Badge color="pink" variant="light" size={"lg"}>
+            {data.bloodSugar}
+          </Badge>
+        ) : null}
+      </Group>
+
+      {data.text ? (
+        <Container
+          mt="md"
+          bg="rgb(231, 245, 255)"
+          mih={40}
+          p={10}
+          sx={{ borderRadius: 5 }}
+        >
+          <Text
+            size="sm"
+            color="rgb(34, 139, 230)"
+            sx={{
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              wordWrap: "break-word",
+            }}
+          >
+            {data.text}{" "}
+          </Text>
+        </Container>
+      ) : null}
+    </>
+  );
+};
+
 const DailyBox: FC = () => {
   const navigate = useNavigate();
-  const [fullImageUrl, setFullImageUrl] = useState<string>("");
+  const [modalData, setModalData] = useState<ITrackingInfoDoc | null>(null);
   const [date, setDate] = useState<Date | null>(new Date());
   const [data, setData] = useState<ITrackingInfoDoc[]>([]);
   const recordState = useRecordState();
@@ -37,12 +78,17 @@ const DailyBox: FC = () => {
 
   return (
     <>
-      <Modal
-        opened={fullImageUrl !== ""}
-        onClose={() => setFullImageUrl("")}
-        fullScreen
-      >
-        <Image src={fullImageUrl} width={"100%"} alt={"Full image"} />
+      <Modal opened={!!modalData} onClose={() => setModalData(null)} fullScreen>
+        {modalData?.imageUrl && (
+          <>
+            <Image
+              src={`${process.env.REACT_APP_S3_PATH}/${modalData.imageUrl}`}
+              width={"100%"}
+              alt={"Full image"}
+            />
+            <DailyInfoCard data={modalData} />
+          </>
+        )}
       </Modal>
       <DatePicker
         m={20}
@@ -54,7 +100,7 @@ const DailyBox: FC = () => {
         onChange={(date) => setDate(date)}
       />
       <Button m={16} onClick={() => navigate("/form")}>
-        {"Add Image"}
+        {"Update"}
       </Button>
       {data.map((data) => (
         <Card
@@ -77,47 +123,13 @@ const DailyBox: FC = () => {
                 w={30}
                 p={0}
                 h={30}
-                onClick={() =>
-                  setFullImageUrl(
-                    `${process.env.REACT_APP_S3_PATH}/${data.imageUrl}`
-                  )
-                }
+                onClick={() => setModalData(data)}
               >
                 +
               </Button>
             </Card.Section>
           ) : null}
-
-          <Group position="apart" mt="md" mb="xs">
-            <Text weight={500}>{data.type}</Text>
-            {data.bloodSugar ? (
-              <Badge color="pink" variant="light" size={"lg"}>
-                {data.bloodSugar}
-              </Badge>
-            ) : null}
-          </Group>
-
-          {data.text ? (
-            <Container
-              mt="md"
-              bg="rgb(231, 245, 255)"
-              mih={40}
-              p={10}
-              sx={{ borderRadius: 5 }}
-            >
-              <Text
-                size="sm"
-                color="rgb(34, 139, 230)"
-                sx={{
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                  wordWrap: "break-word",
-                }}
-              >
-                {data.text}{" "}
-              </Text>
-            </Container>
-          ) : null}
+          <DailyInfoCard data={data} />
         </Card>
       ))}
     </>
