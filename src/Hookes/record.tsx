@@ -8,6 +8,7 @@ type State = {
 
 type Action =
   | { type: "STORE_DATA"; data: ITrackingInfo[] }
+  | { type: "ADD_DATA"; data: ITrackingInfo }
   | { type: "FETCH_DATA" };
 
 type TypeDispatch = Dispatch<Action>;
@@ -20,6 +21,11 @@ function reducer(state: State, action: Action): State {
     case "STORE_DATA":
       return {
         data: action.data,
+        loading: false,
+      };
+    case "ADD_DATA":
+      return {
+        data: [...state.data, action.data],
         loading: false,
       };
     case "FETCH_DATA":

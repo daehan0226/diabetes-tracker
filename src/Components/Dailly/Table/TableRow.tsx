@@ -1,8 +1,8 @@
 import React, { FC, useState } from "react";
 import { Text, Button, NumberInput } from "@mantine/core";
-import { IDailyTrackInfo, MealType } from "../../../@types";
+import { IDailyTrackInfo, ITrackingInfo, MealType } from "../../../@types";
 import { createTracking } from "../../../Apis";
-import { useAuthState } from "../../../Hookes";
+import { useAuthState, useRecordDispatch } from "../../../Hookes";
 
 interface DailyTableProps {
   data: IDailyTrackInfo[];
@@ -56,17 +56,21 @@ const TableRow: FC<DailyTableProps> = ({ data, refresh }) => {
   const state = useAuthState();
   const [bloodSugar, setBloodSugar] = useState<number>(0);
   const [editEle, setEditEle] = useState<string>("");
+  const recordDispatch = useRecordDispatch();
 
   const handleSubmit = async (date: string, type: MealType) => {
-    await createTracking(state.userId, {
+    const data: ITrackingInfo = {
       date,
       type,
       bloodSugar,
-    });
-    setEditEle("");
-    refresh();
+    };
+    const result = await createTracking(state.userId, data);
+    if (result) {
+      recordDispatch({ type: "ADD_DATA", data });
+      setEditEle("");
+      refresh();
+    }
   };
-
   return (
     <>
       {data.map(({ date, trackingInfo }) => (
