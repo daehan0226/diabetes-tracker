@@ -15,7 +15,7 @@ const DailyFormStep: FC = () => {
 
   const prevStep = () => {
     if (active === 0) {
-      navigate("/result");
+      navigate("/result/monthly");
     } else {
       setActive((current) => (current > 0 ? current - 1 : current));
     }

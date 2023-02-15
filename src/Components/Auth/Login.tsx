@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Flex, Title } from "@mantine/core";
 import { GoogleLogin } from "@react-oauth/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -7,11 +7,19 @@ import { useAuthDispatch } from "../../Hookes";
 import { authLogin } from "../../Apis";
 import { AuthProvider } from "../../@types";
 import jwt_decode from "jwt-decode";
-import { Token } from "../../Helper";
+import { getUserId, Token } from "../../Helper";
 
 function Login() {
   const navigate = useNavigate();
   const dispatch = useAuthDispatch();
+
+  useEffect(() => {
+    const userId = getUserId();
+    if (userId) {
+      dispatch({ type: "LOG_IN", userId });
+      navigate("/result/monthly");
+    }
+  }, []);
   return (
     <Flex
       h={400}
@@ -36,7 +44,7 @@ function Login() {
               // );
               if (decoded?.sub) {
                 dispatch({ type: "LOG_IN", userId: decoded.sub });
-                navigate("/result");
+                navigate("/result/monthly");
               } else {
                 dispatch({ type: "LOG_OUT" });
                 console.log("Login Failed");

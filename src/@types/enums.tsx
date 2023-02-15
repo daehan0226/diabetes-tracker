@@ -14,9 +14,9 @@ export enum DailyFormType {
 }
 
 export enum DisplayType {
-  MONTH = "MONTH",
-  DAY = "DAY",
-  GRAPH = "GRAPH",
+  MONTH = "Monthly",
+  DAY = "Daily",
+  GRAPH = "Graph",
 }
 
 export enum AuthProvider {

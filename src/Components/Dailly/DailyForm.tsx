@@ -75,7 +75,7 @@ const DailyForm: FC<DailyFormProps> = ({ date, type }) => {
     });
     setLoading(false);
     if (result) {
-      navigate("/result");
+      navigate("/result/month");
     }
   };
 
