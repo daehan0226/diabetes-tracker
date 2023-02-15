@@ -3,6 +3,7 @@ import { Text, Button, NumberInput } from "@mantine/core";
 import { IDailyTrackInfo, ITrackingInfo, MealType } from "../../../@types";
 import { createTracking } from "../../../Apis";
 import { useAuthState, useRecordDispatch } from "../../../Hookes";
+import { useNavigate } from "react-router-dom";
 
 interface DailyTableProps {
   data: IDailyTrackInfo[];
@@ -54,6 +55,7 @@ const TableCell: FC<TableCellProps> = ({ number, type }) => {
 
 const TableRow: FC<DailyTableProps> = ({ data, refresh }) => {
   const state = useAuthState();
+  const navigate = useNavigate();
   const [bloodSugar, setBloodSugar] = useState<number>(0);
   const [editEle, setEditEle] = useState<string>("");
   const recordDispatch = useRecordDispatch();
@@ -75,7 +77,14 @@ const TableRow: FC<DailyTableProps> = ({ data, refresh }) => {
     <>
       {data.map(({ date, trackingInfo }) => (
         <tr key={date}>
-          <td>{date}</td>
+          <td
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              navigate("/result/daily", { state: { date: new Date(date) } })
+            }
+          >
+            {date}
+          </td>
           {tableCols.map((col) => (
             <td
               key={tableCellKey(date, col)}

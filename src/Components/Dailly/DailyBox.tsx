@@ -10,7 +10,7 @@ import {
   Modal,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useRecordState } from "../../Hookes";
 import { setDateFormat } from "../../Helper";
 import { ITrackingInfoDoc } from "../../@types";
@@ -59,8 +59,9 @@ const DailyInfoCard: FC<DailyInfoCardProps> = ({ data }) => {
 
 const DailyBox: FC = () => {
   const navigate = useNavigate();
+  const { state } = useLocation();
   const [modalData, setModalData] = useState<ITrackingInfoDoc | null>(null);
-  const [date, setDate] = useState<Date | null>(new Date());
+  const [date, setDate] = useState<Date | null>(state?.date ?? new Date());
   const [data, setData] = useState<ITrackingInfoDoc[]>([]);
   const recordState = useRecordState();
 
