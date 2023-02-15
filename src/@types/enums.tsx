@@ -8,6 +8,13 @@ export enum MealType {
   Snack_NIGHT = "Snack(night)",
 }
 
+export enum MealBaiscType {
+  Fasting = "Fasting",
+  Breakfast = "Breakfast",
+  Lunch = "Lunch",
+  Dinner = "Dinner",
+}
+
 export enum DailyFormType {
   Image = "Image",
   BloodSugar = "BloodSugar",

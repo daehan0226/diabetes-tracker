@@ -1,9 +1,10 @@
 import React, { FC, useState } from "react";
-import { Text, Button, NumberInput } from "@mantine/core";
+import { Button, NumberInput } from "@mantine/core";
 import { IDailyTrackInfo, ITrackingInfo, MealType } from "../../../@types";
 import { createTracking } from "../../../Apis";
 import { useAuthState, useRecordDispatch } from "../../../Hookes";
 import { useNavigate } from "react-router-dom";
+import TableCell from "./TableCell";
 
 interface DailyTableProps {
   data: IDailyTrackInfo[];
@@ -17,40 +18,8 @@ const tableCols = [
   MealType.Dinner,
 ];
 
-const getWarningNumber = (type: MealType) => {
-  switch (type) {
-    case MealType.Fasting:
-      return 100;
-    case MealType.Breakfast:
-    case MealType.Lunch:
-    case MealType.Dinner:
-      return 140;
-    default:
-      return 140;
-  }
-};
-
 const tableCellKey = (date: string, col: MealType) => {
   return `${date}_${col}`;
-};
-
-interface TableCellProps {
-  number: number;
-  type: MealType;
-}
-
-const TableCell: FC<TableCellProps> = ({ number, type }) => {
-  if (number) {
-    return (
-      <Text
-        sx={{ cursor: "pointer" }}
-        color={number > getWarningNumber(type) ? "red" : "black"}
-      >
-        {number}
-      </Text>
-    );
-  }
-  return <Text sx={{ cursor: "pointer" }}>__</Text>;
 };
 
 const TableRow: FC<DailyTableProps> = ({ data, refresh }) => {
@@ -83,7 +52,7 @@ const TableRow: FC<DailyTableProps> = ({ data, refresh }) => {
               navigate("/result/daily", { state: { date: new Date(date) } })
             }
           >
-            {date}
+            {date.slice(2, 10)}
           </td>
           {tableCols.map((col) => (
             <td

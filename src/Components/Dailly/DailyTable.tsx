@@ -1,6 +1,11 @@
 import React, { FC, useState } from "react";
 import { Select, Table } from "@mantine/core";
-import { IDailyTrackInfo, ITrackingInfo, MealType } from "../../@types";
+import {
+  IDailyTrackInfo,
+  ITrackingInfo,
+  MealBaiscType,
+  MealType,
+} from "../../@types";
 import { useRecordState } from "../../Hookes";
 import { OrderByArray, setDateFormat } from "../../Helper";
 import { DatePicker } from "@mantine/dates";
@@ -34,13 +39,12 @@ const setDailyData = (
   return format;
 };
 
-const minYear = 2023;
-const currentYear = new Date().getFullYear();
-const minDate = "2023-01-01";
-const maxYearMonth = new Date().toISOString().slice(0, 7);
 const cols = ["Date", "Fasting", "Breakfast", "Lunch", "Dinner"];
 
 const getMonths = () => {
+  const currentYear = new Date().getFullYear();
+  const maxYearMonth = new Date().toISOString().slice(0, 7);
+  const minYear = 2023;
   let result = [];
   let years = [];
   let months = [
@@ -112,14 +116,14 @@ const DailyTable: FC = () => {
         onChange={(date) => {
           if (date) setAddDate(date);
         }}
-        minDate={new Date(minDate)}
+        minDate={new Date("2023-01-01")}
         maxDate={new Date()}
       />
       <Select placeholder="Pick month" data={getMonths()} onChange={setMonth} />
       <Table withBorder withColumnBorders>
         <thead>
           <tr>
-            {cols.map((col) => (
+            {["Date", ...Object.values(MealBaiscType)].map((col) => (
               <th key={`table-col-${col}`}>{col}</th>
             ))}
           </tr>
