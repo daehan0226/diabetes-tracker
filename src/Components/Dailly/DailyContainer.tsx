@@ -5,7 +5,7 @@ import { Button, Container, Flex, useMantineTheme } from "@mantine/core";
 import { DisplayType } from "../../@types";
 import { useAuthState, useRecordDispatch } from "../../Hookes";
 import { getTracking } from "../../Apis";
-import { LineChartComponent } from "./Chart";
+import { AverageComponent, LineChartComponent } from "./Chart";
 import { useMediaQuery } from "@mantine/hooks";
 import { Route, Routes, useNavigate } from "react-router-dom";
 
@@ -62,6 +62,7 @@ const DailyContainer: FC = () => {
           element={
             <Container w={1000} h={800}>
               <LineChartComponent />
+              <AverageComponent />
             </Container>
           }
         />

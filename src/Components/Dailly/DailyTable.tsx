@@ -3,7 +3,7 @@ import { Select, Table } from "@mantine/core";
 import {
   IDailyTrackInfo,
   ITrackingInfo,
-  MealBaiscType,
+  MealBasicType,
   MealType,
 } from "../../@types";
 import { useRecordState } from "../../Hookes";
@@ -123,7 +123,7 @@ const DailyTable: FC = () => {
       <Table withBorder withColumnBorders>
         <thead>
           <tr>
-            {["Date", ...Object.values(MealBaiscType)].map((col) => (
+            {["Date", ...Object.values(MealBasicType)].map((col) => (
               <th key={`table-col-${col}`}>{col}</th>
             ))}
           </tr>

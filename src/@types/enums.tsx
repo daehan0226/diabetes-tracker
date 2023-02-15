@@ -8,7 +8,7 @@ export enum MealType {
   Snack_NIGHT = "Snack(night)",
 }
 
-export enum MealBaiscType {
+export enum MealBasicType {
   Fasting = "Fasting",
   Breakfast = "Breakfast",
   Lunch = "Lunch",

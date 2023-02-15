@@ -3,7 +3,7 @@ import {
   DailyFormType,
   DisplayType,
   AuthProvider,
-  MealBaiscType,
+  MealBasicType,
 } from "./enums";
 import { IDailyTrackInfo, IDailyObject } from "./IDailyTrackingInfo";
 import { ITrackingInfo } from "./ITrackingInfo";
@@ -15,7 +15,7 @@ export {
   type ITrackingInfoDoc,
   type IDailyObject,
   MealType,
-  MealBaiscType,
+  MealBasicType,
   DailyFormType,
   DisplayType,
   AuthProvider,
