@@ -7,11 +7,10 @@ import { useAuthState, useRecordDispatch } from "../../Hookes";
 import { getTracking } from "../../Apis";
 import { LineChartComponent } from "./Chart";
 import { useMediaQuery } from "@mantine/hooks";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 const DailyContainer: FC = () => {
-  const [displayType, setDisplayType] = useState<DisplayType>(
-    DisplayType.MONTH
-  );
+  const navigate = useNavigate();
   const recordDispatch = useRecordDispatch();
   const authState = useAuthState();
   const { breakpoints } = useMantineTheme();
@@ -33,23 +32,40 @@ const DailyContainer: FC = () => {
       <Flex align={"center"} justify={"center"}>
         {Object.values(DisplayType).map((display, index) => (
           <Button
-            key={`display_${displayType}_${index}`}
+            key={`display_${display}_${index}`}
             m={8}
-            onClick={() => setDisplayType(display)}
+            onClick={() => navigate(`${display.toLowerCase()}`)}
           >
             {display}
           </Button>
         ))}
       </Flex>
-      {displayType === DisplayType.GRAPH ? (
-        <Container w={1000} h={800}>
-          <LineChartComponent />
-        </Container>
-      ) : null}
-      <Container mt={0} p={0} w={isMobile ? "100%" : 500} h={200}>
-        {displayType === DisplayType.MONTH ? <DailyTable /> : null}
-        {displayType === DisplayType.DAY ? <DailyBox /> : null}
-      </Container>
+      <Routes>
+        <Route
+          path="monthly"
+          element={
+            <Container mt={0} p={0} w={isMobile ? "100%" : 500} h={200}>
+              <DailyTable />
+            </Container>
+          }
+        />
+        <Route
+          path="daily"
+          element={
+            <Container mt={0} p={0} w={isMobile ? "100%" : 500} h={200}>
+              <DailyBox />
+            </Container>
+          }
+        />
+        <Route
+          path="graph"
+          element={
+            <Container w={1000} h={800}>
+              <LineChartComponent />
+            </Container>
+          }
+        />
+      </Routes>
     </>
   );
 };
