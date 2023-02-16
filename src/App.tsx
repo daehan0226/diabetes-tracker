@@ -6,7 +6,14 @@ import { Footer, Header } from "./Components";
 
 const App: FC = () => {
   return (
-    <Container w={"100%"} p={0} mt={0} mb={0} h={"100%"}>
+    <Container
+      w={"100%"}
+      p={0}
+      mt={0}
+      mb={0}
+      h={"100%"}
+      sx={{ maxWidth: "100%" }}
+    >
       <Header />
       <Main />
       <Footer />

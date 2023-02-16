@@ -1,7 +1,13 @@
 import React, { FC, useEffect, useState } from "react";
 import DailyBox from "./DailyBox";
 import DailyTable from "./DailyTable";
-import { Button, Container, Flex, useMantineTheme } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Divider,
+  Flex,
+  useMantineTheme,
+} from "@mantine/core";
 import { DisplayType } from "../../@types";
 import { useAuthState, useRecordDispatch } from "../../Hookes";
 import { getTracking } from "../../Apis";
@@ -29,17 +35,6 @@ const DailyContainer: FC = () => {
 
   return (
     <>
-      <Flex align={"center"} justify={"center"}>
-        {Object.values(DisplayType).map((display, index) => (
-          <Button
-            key={`display_${display}_${index}`}
-            m={8}
-            onClick={() => navigate(`${display.toLowerCase()}`)}
-          >
-            {display}
-          </Button>
-        ))}
-      </Flex>
       <Routes>
         <Route
           path="monthly"
@@ -67,6 +62,34 @@ const DailyContainer: FC = () => {
           }
         />
       </Routes>
+      <Container
+        sx={{
+          position: "fixed",
+          bottom: 0,
+          width: "100%",
+          zIndex: 1000,
+          backgroundColor: "white",
+          borderTop: "solid 1px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          maxWidth: "100%",
+        }}
+      >
+        {Object.values(DisplayType).map((display, index) => (
+          <Container m={1} sx={{ maxWidth: "100%" }}>
+            <Button
+              sx={{ width: 80 }}
+              key={`display_${display}_${index}`}
+              fullWidth={true}
+              variant="subtle"
+              onClick={() => navigate(`${display.toLowerCase()}`)}
+            >
+              {display}
+            </Button>
+          </Container>
+        ))}
+      </Container>
     </>
   );
 };
